@@ -1,0 +1,40 @@
+# Node modules and cache
+node_modules/
+.npm/
+.vite/
+dist/
+.cache/
+
+# Build outputs
+build/
+*.log
+
+# Runtime files
+.env
+.env.local
+.env.*.local
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Python virtualenv
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# VS Code settings
+.vscode/
+
+# Flask cache
+instance/
+*.sqlite3
+*.db
+
+# Model/asset backups
+*.glb~
+*.glb.backup
+*.blend1
+
