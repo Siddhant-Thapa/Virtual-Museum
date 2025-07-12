@@ -23,16 +23,25 @@ export default function PlayerControls() {
     }, []);
 
     useFrame(() => {
+        // ✅ Don't move camera if an input or textarea is focused
+        const activeElement = document.activeElement;
+        if (
+            activeElement &&
+            (activeElement.tagName === "INPUT" || activeElement.tagName === "TEXTAREA")
+        ) {
+            return;
+        }
+
         const direction = new THREE.Vector3();
         const forward = new THREE.Vector3();
         const right = new THREE.Vector3();
 
-        // Camera facing direction (forward vector)
+        // Get forward direction
         camera.getWorldDirection(forward);
         forward.y = 0;
         forward.normalize();
 
-        // Right vector (cross product with up vector)
+        // Get right direction
         right.crossVectors(forward, camera.up).normalize();
 
         if (keys.current["w"]) direction.add(forward);
