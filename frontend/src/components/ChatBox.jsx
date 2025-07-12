@@ -8,18 +8,14 @@ export default function ChatBox({ onClose, autoQuestion = "" }) {
     const [isMuted, setIsMuted] = useState(false);
     const recognitionRef = useRef(null);
     const inputRef = useRef(null);
+    const hasUserTypedRef = useRef(false); // ✅ NEW
 
     const speak = (text) => {
         if (isMuted) return;
-
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'en-US';
-
-        // Wait for voices to load and select female voice
         const setVoiceAndSpeak = () => {
             const voices = window.speechSynthesis.getVoices();
-
-            // Look for female voices (prioritize by common female voice names)
             const femaleVoice = voices.find(v =>
                 v.name.toLowerCase().includes('female') ||
                 v.name.toLowerCase().includes('samantha') ||
@@ -30,25 +26,17 @@ export default function ChatBox({ onClose, autoQuestion = "" }) {
                 (v.name.toLowerCase().includes('google') && v.name.toLowerCase().includes('female')) ||
                 (v.name.toLowerCase().includes('microsoft') && v.name.toLowerCase().includes('zira'))
             );
-
-            if (femaleVoice) {
-                utterance.voice = femaleVoice;
-            }
-
+            if (femaleVoice) utterance.voice = femaleVoice;
             window.speechSynthesis.speak(utterance);
         };
-
-        // If voices are already loaded, set voice immediately
         if (window.speechSynthesis.getVoices().length > 0) {
             setVoiceAndSpeak();
         } else {
-            // Wait for voices to load
             window.speechSynthesis.onvoiceschanged = setVoiceAndSpeak;
         }
     };
 
-    const systemPrompt = `
-You are a friendly and knowledgeable AI tour guide inside a 3D Virtual Museum built for PES University. 
+    const systemPrompt = `You are a friendly and knowledgeable AI tour guide inside a 3D Virtual Museum built for PES University. 
 The museum is divided into two rooms:
 
 🟦 Room 1 (Front Room):
@@ -64,14 +52,12 @@ The museum is divided into two rooms:
 
 Speak like a museum guide. Keep responses concise and engaging.
 Avoid repeating the same full description in every response.
-Instead, refer back to what the user has already explored or asked.
-`;
+Instead, refer back to what the user has already explored or asked.`;
 
-    // Auto-send when autoQuestion is provided
+    // ✅ Modified useEffect: Respect user's typing
     useEffect(() => {
-        if (autoQuestion && autoQuestion !== input) {
+        if (autoQuestion && !hasUserTypedRef.current) {
             setInput(autoQuestion);
-            // Auto-send the question after a short delay
             const timer = setTimeout(() => {
                 handleSend(autoQuestion);
             }, 100);
@@ -81,39 +67,29 @@ Instead, refer back to what the user has already explored or asked.
 
     useEffect(() => {
         if (!('webkitSpeechRecognition' in window)) return;
-
         const recognition = new window.webkitSpeechRecognition();
         recognition.continuous = false;
         recognition.interimResults = false;
         recognition.lang = 'en-US';
-
         recognition.onstart = () => setListening(true);
         recognition.onend = () => setListening(false);
         recognition.onresult = (event) => {
             const transcript = event.results[0][0].transcript;
             setInput(transcript);
         };
-
         recognitionRef.current = recognition;
     }, []);
 
     useEffect(() => {
         const handleKeyDown = (e) => {
-            // Check if user is typing in an input field
             const isTypingInInput = document.activeElement === inputRef.current ||
                 document.activeElement.tagName === 'INPUT' ||
                 document.activeElement.tagName === 'TEXTAREA';
-
-            // Only handle global shortcuts if not typing in an input
             if (!isTypingInInput) {
-                if (e.key.toLowerCase() === 'q') {
-                    onClose();
-                } else if (e.key.toLowerCase() === 'm') {
-                    setIsMuted((prev) => !prev);
-                }
+                if (e.key.toLowerCase() === 'q') onClose();
+                if (e.key.toLowerCase() === 'm') setIsMuted(prev => !prev);
             }
         };
-
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [onClose]);
@@ -121,17 +97,11 @@ Instead, refer back to what the user has already explored or asked.
     const handleSend = async (messageText = null) => {
         const textToSend = messageText || input;
         if (!textToSend.trim() || isLoading) return;
-
         const userMessage = { from: 'user', text: textToSend };
         const newMessages = [...messages, userMessage];
         setMessages(newMessages);
         setIsLoading(true);
-
-        // Clear input only if it was typed manually (not auto-question)
-        if (!messageText) {
-            setInput('');
-        }
-
+        if (!messageText) setInput('');
         try {
             const modelOptions = [
                 "anthropic/claude-3-haiku",
@@ -140,9 +110,7 @@ Instead, refer back to what the user has already explored or asked.
                 "mistralai/mistral-7b-instruct",
                 "openai/gpt-3.5-turbo"
             ];
-
             let response = null;
-
             for (const model of modelOptions) {
                 try {
                     const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -166,7 +134,6 @@ Instead, refer back to what the user has already explored or asked.
                             temperature: 0.7
                         })
                     });
-
                     if (res.ok) {
                         const data = await res.json();
                         if (data?.choices?.[0]?.message?.content) {
@@ -181,20 +148,12 @@ Instead, refer back to what the user has already explored or asked.
             const finalResponse = response || fallbackResponse;
             setMessages(prev => [...prev, { from: 'ai', text: finalResponse }]);
             speak(finalResponse);
-
-            // Only clear input if it wasn't an auto-question
-            if (!messageText) {
-                setInput('');
-            }
+            if (!messageText) setInput('');
         } catch (err) {
             const fallbackResponse = getFallbackResponse(textToSend);
             setMessages(prev => [...prev, { from: 'ai', text: fallbackResponse }]);
             speak(fallbackResponse);
-
-            // Only clear input if it wasn't an auto-question
-            if (!messageText) {
-                setInput('');
-            }
+            if (!messageText) setInput('');
         } finally {
             setIsLoading(false);
         }
@@ -202,27 +161,13 @@ Instead, refer back to what the user has already explored or asked.
 
     const getFallbackResponse = (userInput) => {
         const input = userInput.toLowerCase();
-        if (input.includes('hello') || input.includes('hi')) {
-            return "Hello! Welcome to the PES University Virtual Museum! 🏛️ What would you like to explore?";
-        }
-        if (input.includes('room 1') || input.includes('front')) {
-            return "Room 1 features the warrior sculpture, a T-Rex skeleton, and an ancient knife.";
-        }
-        if (input.includes('room 2') || input.includes('back')) {
-            return "Room 2 contains the Diplodocus, Arrow Man, Spear Man, and GN sculpture.";
-        }
-        if (input.includes('t-rex')) {
-            return "The T-Rex skeleton is a fearsome dinosaur with powerful jaws and a towering frame.";
-        }
-        if (input.includes('warrior')) {
-            return "The warrior sculpture showcases classical craftsmanship and symbolic strength.";
-        }
-        if (input.includes('diplodocus')) {
-            return "The Diplodocus display highlights its long neck and elegant structure, suspended from above.";
-        }
-        if (input.includes('hephaestus')) {
-            return "The Hephaestus temple represents ancient Greek architecture and mythology, showcasing the god of fire and metalworking.";
-        }
+        if (input.includes('hello') || input.includes('hi')) return "Hello! Welcome to the PES University Virtual Museum! 🏛️ What would you like to explore?";
+        if (input.includes('room 1') || input.includes('front')) return "Room 1 features the warrior sculpture, a T-Rex skeleton, and an ancient knife.";
+        if (input.includes('room 2') || input.includes('back')) return "Room 2 contains the Diplodocus, Arrow Man, Spear Man, and GN sculpture.";
+        if (input.includes('t-rex')) return "The T-Rex skeleton is a fearsome dinosaur with powerful jaws and a towering frame.";
+        if (input.includes('warrior')) return "The warrior sculpture showcases classical craftsmanship and symbolic strength.";
+        if (input.includes('diplodocus')) return "The Diplodocus display highlights its long neck and elegant structure, suspended from above.";
+        if (input.includes('hephaestus')) return "The Hephaestus temple represents ancient Greek architecture and mythology, showcasing the god of fire and metalworking.";
         return "Feel free to ask about any exhibits like the T-Rex, warrior, or GN sculpture!";
     };
 
@@ -260,7 +205,10 @@ Instead, refer back to what the user has already explored or asked.
                 <input
                     ref={inputRef}
                     value={input}
-                    onChange={e => setInput(e.target.value)}
+                    onChange={e => {
+                        hasUserTypedRef.current = true; // ✅ Mark as user-typed
+                        setInput(e.target.value);
+                    }}
                     onKeyPress={handleKeyPress}
                     style={styles.input}
                     placeholder="Ask your museum guide..."
@@ -293,104 +241,50 @@ Instead, refer back to what the user has already explored or asked.
 
 const styles = {
     chatBox: {
-        position: 'absolute',
-        bottom: 20,
-        right: 20,
-        width: 380,
-        background: '#ffffff',
-        border: '2px solid #007bff',
-        borderRadius: 12,
-        padding: 16,
-        zIndex: 1000,
-        boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
-        fontFamily: 'Arial, sans-serif'
+        position: 'absolute', bottom: 20, right: 20, width: 380,
+        background: '#ffffff', border: '2px solid #007bff',
+        borderRadius: 12, padding: 16, zIndex: 1000,
+        boxShadow: '0 4px 16px rgba(0,0,0,0.15)', fontFamily: 'Arial, sans-serif'
     },
     closeBtn: {
-        position: 'absolute',
-        top: 8,
-        right: 8,
-        background: 'transparent',
-        border: 'none',
-        fontSize: 18,
-        cursor: 'pointer',
-        opacity: 0.7
+        position: 'absolute', top: 8, right: 8,
+        background: 'transparent', border: 'none',
+        fontSize: 18, cursor: 'pointer', opacity: 0.7
     },
     header: { marginBottom: 12 },
-    title: {
-        margin: 0,
-        fontSize: 16,
-        color: '#007bff',
-        textAlign: 'center'
-    },
+    title: { margin: 0, fontSize: 16, color: '#007bff', textAlign: 'center' },
     chat: {
-        height: 200,
-        overflowY: 'auto',
-        marginBottom: 12,
-        backgroundColor: '#f8f9fa',
-        padding: 10,
-        borderRadius: 8,
-        border: '1px solid #e9ecef'
+        height: 200, overflowY: 'auto', marginBottom: 12,
+        backgroundColor: '#f8f9fa', padding: 10,
+        borderRadius: 8, border: '1px solid #e9ecef'
     },
     message: {
-        marginBottom: 8,
-        padding: 8,
-        borderRadius: 8,
-        fontSize: 14,
-        lineHeight: 1.4
+        marginBottom: 8, padding: 8, borderRadius: 8,
+        fontSize: 14, lineHeight: 1.4
     },
-    userMessage: {
-        backgroundColor: '#e3f2fd',
-        marginLeft: 20,
-        textAlign: 'right'
-    },
-    aiMessage: {
-        backgroundColor: '#f1f8e9',
-        marginRight: 20
-    },
+    userMessage: { backgroundColor: '#e3f2fd', marginLeft: 20, textAlign: 'right' },
+    aiMessage: { backgroundColor: '#f1f8e9', marginRight: 20 },
     welcomeMsg: {
-        textAlign: 'center',
-        color: '#666',
-        fontStyle: 'italic',
-        padding: 20,
-        fontSize: 14
+        textAlign: 'center', color: '#666',
+        fontStyle: 'italic', padding: 20, fontSize: 14
     },
     loadingMsg: {
-        textAlign: 'center',
-        color: '#007bff',
-        fontStyle: 'italic',
-        padding: 8
+        textAlign: 'center', color: '#007bff',
+        fontStyle: 'italic', padding: 8
     },
-    inputRow: {
-        display: 'flex',
-        gap: 8
-    },
+    inputRow: { display: 'flex', gap: 8 },
     input: {
-        flexGrow: 1,
-        padding: 10,
-        borderRadius: 6,
-        border: '1px solid #ccc',
-        fontSize: 14,
-        outline: 'none'
+        flexGrow: 1, padding: 10, borderRadius: 6,
+        border: '1px solid #ccc', fontSize: 14, outline: 'none'
     },
     sendBtn: {
-        padding: '10px 12px',
-        border: 'none',
-        backgroundColor: '#007bff',
-        color: '#fff',
-        borderRadius: 6,
-        cursor: 'pointer',
-        fontSize: 14,
-        fontWeight: 'bold'
+        padding: '10px 12px', border: 'none',
+        backgroundColor: '#007bff', color: '#fff',
+        borderRadius: 6, cursor: 'pointer', fontSize: 14, fontWeight: 'bold'
     },
-    btnDisabled: {
-        backgroundColor: '#ccc',
-        cursor: 'not-allowed'
-    },
+    btnDisabled: { backgroundColor: '#ccc', cursor: 'not-allowed' },
     tipBar: {
-        marginBottom: 6,
-        fontSize: 13,
-        textAlign: 'center',
-        color: '#555',
-        fontStyle: 'italic'
+        marginBottom: 6, fontSize: 13,
+        textAlign: 'center', color: '#555', fontStyle: 'italic'
     }
 };
