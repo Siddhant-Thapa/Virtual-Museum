@@ -40,15 +40,15 @@ export default function ChatBox({ onClose, autoQuestion = "" }) {
 The museum is divided into two rooms:
 
 🟦 Room 1 (Front Room):
-- A marble sculpture of a warrior at the center
+- A marble sculpture of a stag at the center
 - A T-Rex skeleton on the right
-- An ancient ceremonial knife on the left pedestal
+- An ancient ceremonial knife on the right pedestal
 
 🟥 Room 2 (Back Room):
 - Diplodocus dinosaur hanging from above
 - Arrow Man statue on the right
 - Spear Man statue in the far right
-- GN geometric sculpture on the far left
+- Greek god temple sculpture on the far right
 
 Speak like a museum guide. Keep responses concise and engaging.
 Avoid repeating the same full description in every response.
@@ -162,13 +162,13 @@ Instead, refer back to what the user has already explored or asked.`;
     const getFallbackResponse = (userInput) => {
         const input = userInput.toLowerCase();
         if (input.includes('hello') || input.includes('hi')) return "Hello! Welcome to the PES University Virtual Museum! 🏛️ What would you like to explore?";
-        if (input.includes('room 1') || input.includes('front')) return "Room 1 features the warrior sculpture, a T-Rex skeleton, and an ancient knife.";
-        if (input.includes('room 2') || input.includes('back')) return "Room 2 contains the Diplodocus, Arrow Man, Spear Man, and GN sculpture.";
+        if (input.includes('room 1') || input.includes('front')) return "Room 1 features the stag sculpture, a T-Rex skeleton, and an ancient knife.";
+        if (input.includes('room 2') || input.includes('back')) return "Room 2 contains the Diplodocus, Arrow Man, Spear Man, and greek god temple.";
         if (input.includes('t-rex')) return "The T-Rex skeleton is a fearsome dinosaur with powerful jaws and a towering frame.";
-        if (input.includes('warrior')) return "The warrior sculpture showcases classical craftsmanship and symbolic strength.";
+        if (input.includes('spear-man')) return "The warrior sculpture showcases classical craftsmanship and symbolic strength.";
         if (input.includes('diplodocus')) return "The Diplodocus display highlights its long neck and elegant structure, suspended from above.";
         if (input.includes('hephaestus')) return "The Hephaestus temple represents ancient Greek architecture and mythology, showcasing the god of fire and metalworking.";
-        return "Feel free to ask about any exhibits like the T-Rex, warrior, or GN sculpture!";
+        return "Feel free to ask about any exhibits like the T-Rex, warrior, or greek temple!";
     };
 
     const handleKeyPress = (e) => {

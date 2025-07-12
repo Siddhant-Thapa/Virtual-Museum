@@ -8,7 +8,7 @@ import Sculpture from "./components/Sculpture";
 import Floor from "./components/Floor";
 import AssistantAvatar from './components/AssistantAvatar';
 import ChatBox from './components/ChatBox';
-
+import NPC from './components/NPC';
 export default function App() {
   const [showChat, setShowChat] = useState(false);
   const [autoQuestion, setAutoQuestion] = useState("");
@@ -84,7 +84,7 @@ export default function App() {
           scale={1.6}
           wireframeSize={[2.5, 8.5, 2.5]}
           onClick={() => {
-            setAutoQuestion("Tell me about the warrior sculpture in the center of Room 1.");
+            setAutoQuestion("Tell me about the stag sculpture in the center of Room 1.");
           }}
         />
         <Sculpture
@@ -94,7 +94,7 @@ export default function App() {
           scale={0.03}
           wireframeSize={[200, 200, 200]}
           onClick={() => {
-            setAutoQuestion("Tell me about the T-Rex skeleton.");
+            setAutoQuestion("Tell me about the T-Rex scupture.");
           }}
         />
         <mesh position={[-8, 0.75, 8]}>
@@ -106,7 +106,7 @@ export default function App() {
           position={[-8, 1.5, 8]}
           scale={3}
           onClick={() => {
-            setAutoQuestion("Tell me about the ceremonial knife.");
+            setAutoQuestion("Tell me about the ceremonial sword.");
           }}
         />
 
@@ -147,11 +147,34 @@ export default function App() {
             setAutoQuestion("What is the Hephaestus temple in the back room?");
           }}
         />
+        <NPC modelPath="/models/npc1.glb" name="Visitor A" startPos={[2, 0, -3]} scale={1.6} />
+        <NPC modelPath="/models/npc2.glb" name="Visitor B" startPos={[-3, 0, 2]} scale={1.6} />
+        <NPC
+          modelPath="/models/npc3.glb"
+          name="Visitor C"
+          startPos={[4, 0, 30]}
+          scale={0.6}
+        />
+
+        <NPC
+          modelPath="/models/npc4.glb"
+          name="small skeleton"
+          startPos={[6, 1, 35]}
+          // wanderBounds={[-5, -5, 15, 15]}
+          scale={2.8}
+        />
+
+        <NPC
+          modelPath="/models/npc5.glb"
+          name="Zombie"
+          startPos={[4, 0, 43]}
+          wanderBounds={[-5, -5, 35, 15]}
+          scale={0.3}
+        />
 
         {/* AI Assistant Model */}
         {/* onClick removed to avoid accidental triggers */}
         <AssistantAvatar />
-
         {/* Controls */}
         <PointerLockControls />
         <PlayerControls />
