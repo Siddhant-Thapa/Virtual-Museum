@@ -32,7 +32,119 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Sculpture Component Styles */
+
+.sculpture-tooltip {
+  background: rgba(0, 0, 0, 0.8);
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  pointer-events: none;
+  white-space: nowrap;
+  transition: opacity 0.3s ease;
+  text-align: center;
+}
+
+.sculpture-tooltip-sub {
+  font-size: 10px;
+  margin-top: 2px;
+  opacity: 0.8;
+}
+
+.sculpture-info-container {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  pointer-events: auto;
+}
+
+.sculpture-info-box {
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(10px);
+  border: 2px solid #007bff;
+  border-radius: 12px;
+  padding: 16px;
+  max-width: 320px;
+  min-width: 280px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  position: relative;
+  color: #333;
+}
+
+.sculpture-close-btn {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #999;
+  font-weight: bold;
+  padding: 4px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.sculpture-close-btn:hover {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.sculpture-title {
+  margin: 0 0 12px 0;
+  color: #007bff;
+  padding-right: 24px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.sculpture-info-text {
+  margin: 0 0 16px 0;
+  color: #444;
+}
+
+.sculpture-buttons {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.sculpture-chat-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.sculpture-chat-btn:hover {
+  background: #0056b3;
+}
+
+.sculpture-footer {
+  font-size: 11px;
+  color: #666;
+  text-align: center;
+  font-style: italic;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 8px;
 }
