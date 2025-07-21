@@ -70,12 +70,12 @@ export default function App() {
         />
 
         {/* Wall Colliders Debug */}
-        {wallBounds.map(([minX, minZ, maxX, maxZ], i) => (
+        {/* {wallBounds.map(([minX, minZ, maxX, maxZ], i) => (
           <mesh key={i} position={[(minX + maxX) / 2, 5, (minZ + maxZ) / 2]}>
             <boxGeometry args={[Math.abs(maxX - minX), 10, Math.abs(maxZ - minZ)]} />
             <meshStandardMaterial color="red" transparent opacity={0.3} />
           </mesh>
-        ))}
+        ))} */}
 
         {/* Room 1 Sculptures */}
         <Sculpture
@@ -147,15 +147,38 @@ export default function App() {
             setAutoQuestion("What is the greek-temple?");
           }}
         />
-        <NPC modelPath="/models/npc1.glb" name="Visitor A" startPos={[2, 0, -3]} scale={0.8} />
-        <NPC modelPath="/models/npc2.glb" name="Visitor B" startPos={[-3, 0, 2]} scale={0.8} />
-        <NPC modelPath="/models/npc3.glb" name="Visitor C" startPos={[4, 0, 30]} scale={0.8} />
-        <NPC modelPath="/models/npc4.glb" name="Visitor D" startPos={[6, 0, 30]} scale={0.8} />
-        {/* wanderBounds={[-5, -5, 15, 15]} FOR d*/}
+        <NPC
+          modelPath="/models/npc1.glb"
+          name="Visitor A"
+          startPos={[2, 0, -3]}
+          scale={0.8}
+        />
+
+        <NPC
+          modelPath="/models/npc2.glb"
+          name="Visitor B"
+          startPos={[-3, 0, 2]}
+          scale={0.8}
+        />
+
+        <NPC
+          modelPath="/models/npc3.glb"
+          name="Visitor C"
+          startPos={[5, 0, 30]}
+          scale={0.8}
+        />
+
+        <NPC
+          modelPath="/models/npc4.glb"
+          name="Visitor D"
+          startPos={[6, 0, 30]}
+          scale={0.8}
+        />
+
         <NPC
           modelPath="/models/npc5.glb"
           name="Visitor E"
-          startPos={[4, 0, 43]}
+          startPos={[7, 0, 43]}
           wanderBounds={[-5, -5, 35, 15]}
           scale={0.8}
         />
