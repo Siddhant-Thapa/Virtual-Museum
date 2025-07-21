@@ -27,10 +27,10 @@ export default function WallWithEntry({
             </mesh>
 
             {/* Above the door */}
-            <mesh position={[0, (height + entryHeight) / 2, 0]}>
+            {/* <mesh position={[0, (height + entryHeight) / 2, 0]}>
                 <boxGeometry args={[entryWidth, height - entryHeight, thickness]} />
                 <meshStandardMaterial color="#888" />
-            </mesh>
+            </mesh> */}
         </group>
     );
 }

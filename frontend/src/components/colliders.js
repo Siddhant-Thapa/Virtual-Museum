@@ -23,21 +23,21 @@ export const wallBounds = [
 
     // Room walls (your existing bounds, if any)
 
-    // 🟦 Room 1
+    //  Room 1
     [-2.5, -2.5, 2.5, 2.5],         // Center statue
     [6, -4, 10.5, 1],              // T-Rex
     [-9, 7, -7, 9],                 // Ceremonial Knife pedestal
 
-    // 🟥 Room 2
+    //  Room 2
     [9, 19, 11, 21],                // Arrow Man
     [-2, 20.5, 2.5, 35.5],        // Diplodocus base
     [9, 39, 11, 41],                // Spear Man
     [-9, 32, -3.5, 40],             // Hephaestus Temple
 
-    // 🤖 Assistant AI
+    //  Assistant AI
     [7.5, 9.5, 8.5, 10.5],          // Assistant base
 
-    // // Optional NPC spawn zones
+    // //  NPC spawn zones
     // [1, -4, 3, -2],                 // Visitor A
     // [-4, 1, -2, 3],                 // Visitor B
 ];

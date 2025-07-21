@@ -8,7 +8,7 @@ export default function ChatBox({ onClose, autoQuestion = "" }) {
     const [isMuted, setIsMuted] = useState(false);
     const recognitionRef = useRef(null);
     const inputRef = useRef(null);
-    const hasUserTypedRef = useRef(false); // ✅ NEW
+    const hasUserTypedRef = useRef(false);
 
     const speak = (text) => {
         if (isMuted) return;
@@ -159,17 +159,41 @@ Instead, refer back to what the user has already explored or asked.`;
         }
     };
 
+    const normalize = str => str.toLowerCase().replace(/-/g, ' ').replace(/[?.!]/g, '');
+
     const getFallbackResponse = (userInput) => {
-        const input = userInput.toLowerCase();
-        if (input.includes('hello') || input.includes('hi')) return "Hello! Welcome to the PES University Virtual Museum! 🏛️ What would you like to explore?";
-        if (input.includes('room 1') || input.includes('front')) return "Room 1 features the stag sculpture, a T-Rex skeleton, and an ancient knife.";
-        if (input.includes('room 2') || input.includes('back')) return "Room 2 contains the Diplodocus, Arrow Man, Spear Man, and greek god temple.";
-        if (input.includes('t-rex')) return "The T-Rex skeleton is a fearsome dinosaur with powerful jaws and a towering frame.";
-        if (input.includes('spear-man')) return "The warrior sculpture showcases classical craftsmanship and symbolic strength.";
-        if (input.includes('diplodocus')) return "The Diplodocus display highlights its long neck and elegant structure, suspended from above.";
-        if (input.includes('hephaestus')) return "The Hephaestus temple represents ancient Greek architecture and mythology, showcasing the god of fire and metalworking.";
-        return "Feel free to ask about any exhibits like the T-Rex, warrior, or greek temple!";
+        const input = normalize(userInput);
+
+        if (input.includes('hello') || input.includes('hi'))
+            return "Hello! Welcome to the PES University Virtual Museum! What would you like to explore?";
+
+        if (input.includes('stag'))
+            return "The stag statue in the middle of room 1 is native to Africa with its long horns.";
+
+        if (input.includes('room 2') || input.includes('back'))
+            return "Room 2 contains the Diplodocus, Arrow Man, Spear Man, and Greek God Temple.";
+
+        if (input.includes('diplodocus'))
+            return "The Diplodocus display highlights its long neck and elegant structure, suspended from above.";
+
+        if (input.includes('t rex') || input.includes('tyrannosaurus') || input.includes('dino'))
+            return "The T-Rex skeleton is a fearsome dinosaur with powerful jaws and a towering frame.";
+
+        if (input.includes('ceremonial sword'))
+            return "The ancient sword was used by Julius Caesar during his quest.";
+
+        if (input.includes('arrow man'))
+            return "The Arrow Man sculpture showcases classical craftsmanship and symbolic strength.";
+
+        if (input.includes('spear man'))
+            return "The Spear Man sculpture showcases classical craftsmanship and symbolic strength.";
+
+        if (input.includes('greek temple') || input.includes('hephaestus') || input.includes('greek god'))
+            return "The Hephaestus temple represents ancient Greek architecture and mythology, showcasing the god of fire and metalworking.";
+
+        return "I'm here to guide you through the museum! Try asking about the T-Rex, Greek Temple, or warrior statues.";
     };
+
 
     const handleKeyPress = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {

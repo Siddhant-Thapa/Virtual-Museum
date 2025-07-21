@@ -13,7 +13,7 @@ export default function App() {
   const [showChat, setShowChat] = useState(false);
   const [autoQuestion, setAutoQuestion] = useState("");
 
-  // 🎯 Open/close chat with "C" key
+  //  Open/close chat with "C" key
   useEffect(() => {
     const handleKeyDown = (e) => {
       const key = e.key.toLowerCase();
@@ -29,7 +29,7 @@ export default function App() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // 🧠 Open chat automatically when a sculpture asks a question
+  //  Open chat automatically when a sculpture asks a question
   useEffect(() => {
     if (autoQuestion) {
       setShowChat(true);
@@ -71,8 +71,8 @@ export default function App() {
 
         {/* Wall Colliders Debug */}
         {wallBounds.map(([minX, minZ, maxX, maxZ], i) => (
-          <mesh key={i} position={[(minX + maxX) / 2, 0.5, (minZ + maxZ) / 2]}>
-            <boxGeometry args={[Math.abs(maxX - minX), 1, Math.abs(maxZ - minZ)]} />
+          <mesh key={i} position={[(minX + maxX) / 2, 5, (minZ + maxZ) / 2]}>
+            <boxGeometry args={[Math.abs(maxX - minX), 10, Math.abs(maxZ - minZ)]} />
             <meshStandardMaterial color="red" transparent opacity={0.3} />
           </mesh>
         ))}
@@ -126,7 +126,7 @@ export default function App() {
           scale={0.009}
           wireframeSize={[900, 900, 900]}
           onClick={() => {
-            setAutoQuestion("Tell me about the Diplodocus dinosaur.");
+            setAutoQuestion("Tell me about the  long neck Diplodocus dinosaur.");
           }}
         />
         <Sculpture
@@ -134,7 +134,7 @@ export default function App() {
           position={[10, 4.2, 40]}
           scale={3}
           onClick={() => {
-            setAutoQuestion("Tell me about the Spear Man statue.");
+            setAutoQuestion("Tell me about the Spear Man?");
           }}
         />
         <Sculpture
@@ -144,33 +144,22 @@ export default function App() {
           tooltipOffsetY={0.5}
           wireframeSize={[0.8, 0.5, 0.8]}
           onClick={() => {
-            setAutoQuestion("What is the Hephaestus temple in the back room?");
+            setAutoQuestion("What is the greek-temple?");
           }}
         />
-        <NPC modelPath="/models/npc1.glb" name="Visitor A" startPos={[2, 0, -3]} scale={1.6} />
-        <NPC modelPath="/models/npc2.glb" name="Visitor B" startPos={[-3, 0, 2]} scale={1.6} />
-        <NPC
-          modelPath="/models/npc3.glb"
-          name="Visitor C"
-          startPos={[4, 0, 30]}
-          scale={0.6}
-        />
-
-        <NPC
-          modelPath="/models/npc4.glb"
-          name="small skeleton"
-          startPos={[6, 1, 35]}
-          // wanderBounds={[-5, -5, 15, 15]}
-          scale={2.8}
-        />
-
+        <NPC modelPath="/models/npc1.glb" name="Visitor A" startPos={[2, 0, -3]} scale={0.8} />
+        <NPC modelPath="/models/npc2.glb" name="Visitor B" startPos={[-3, 0, 2]} scale={0.8} />
+        <NPC modelPath="/models/npc3.glb" name="Visitor C" startPos={[4, 0, 30]} scale={0.8} />
+        <NPC modelPath="/models/npc4.glb" name="Visitor D" startPos={[6, 0, 30]} scale={0.8} />
+        {/* wanderBounds={[-5, -5, 15, 15]} FOR d*/}
         <NPC
           modelPath="/models/npc5.glb"
-          name="Zombie"
+          name="Visitor E"
           startPos={[4, 0, 43]}
           wanderBounds={[-5, -5, 35, 15]}
-          scale={0.3}
+          scale={0.8}
         />
+
 
         {/* AI Assistant Model */}
         {/* onClick removed to avoid accidental triggers */}

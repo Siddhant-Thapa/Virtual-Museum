@@ -11,7 +11,7 @@ export default function Sculpture({ path, position, scale = 1, onClick, proximit
     const [hovered, setHovered] = useState(false);
     const [isNearby, setIsNearby] = useState(false);
 
-    // 📸 Track player-camera proximity to the sculpture
+    //  Track player-camera proximity to the sculpture
     useFrame(() => {
         if (camera && meshRef.current) {
             meshRef.current.updateMatrixWorld();
@@ -37,7 +37,7 @@ export default function Sculpture({ path, position, scale = 1, onClick, proximit
         return () => window.removeEventListener('keydown', handleKey);
     }, [isNearby, onClick]);
 
-    // 🖱️ Change cursor when hovering near object
+    //  Change cursor when hovering near object
     useEffect(() => {
         document.body.style.cursor = hovered && isNearby ? 'pointer' : 'default';
     }, [hovered, isNearby]);
