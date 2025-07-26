@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
-import { PointerLockControls } from "@react-three/drei";
+import { PointerLockControls, Environment } from "@react-three/drei";
 import Room from "./components/Room";
 import PlayerControls from "./components/PlayerControls";
 import { wallBounds } from "./components/colliders";
@@ -46,9 +46,32 @@ export default function App() {
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
       <Canvas camera={{ position: [0, 2, -25], fov: 75 }}>
-        {/* Lights */}
-        <ambientLight intensity={0.4} />
-        <directionalLight position={[10, 25, 10]} intensity={1.2} />
+
+        {/* HDRI Environment Lighting - Reduced intensity */}
+        <Environment preset="night" background={false} intensity={0.6} />
+
+        {/* Option 1: Local HDRI file with much lower intensity */}
+        {/* <Environment
+          files="/hdri/studio_small_03_4k.hdr"
+          background={false}
+          intensity={0.2}
+        /> */}
+
+
+        {/* Much reduced additional lights */}
+        <ambientLight intensity={0.5} />
+        <directionalLight
+          position={[10, 25, 10]}
+          intensity={0.5}
+          castShadow
+          shadow-mapSize={[2048, 2048]}
+          shadow-camera-far={100}
+          shadow-camera-left={-50}
+          shadow-camera-right={50}
+          shadow-camera-top={50}
+          shadow-camera-bottom={-50}
+        />
+
         <Floor width={60} height={60} position={[0, 0, 15]} />
 
         {/* Rooms */}
@@ -60,6 +83,7 @@ export default function App() {
           thickness={wallThickness}
           hasFrontEntry={true}
           hasBackEntry={true}
+          hasRoof={true}
         />
         <Room
           centerZ={roomDepth}
@@ -69,6 +93,7 @@ export default function App() {
           thickness={wallThickness}
           hasFrontEntry={false}
           hasBackEntry={true}
+          hasRoof={true}
         />
 
         {/* Wall Colliders Debug - DISABLED */}
@@ -105,14 +130,19 @@ export default function App() {
           }}
         />
 
-        {/* Knife with pedestal - DON'T REMOVE THE BOX POSITION */}
-        <mesh position={[-8, 0.75, 8]}>
+        {/* sword */}
+        <mesh position={[-8, 0.75, 8]} castShadow receiveShadow>
           <cylinderGeometry args={[0.4, 0.4, 1.5, 32]} />
-          <meshStandardMaterial color="black" />
+          <meshStandardMaterial
+            color="#2c2c2c"
+            metalness={0.1}
+            roughness={0.8}
+          />
         </mesh>
         <Sculpture
           path="/models/Knife.glb"
           position={[-8, 1.5, 8]}
+          tooltipOffsetY={1}
           proximityThreshold={4}
           scale={3}
           title="Ancient Ceremonial Sword"
@@ -189,19 +219,19 @@ export default function App() {
         <NPC
           modelPath="/models/npc3.glb"
           name="Visitor C"
-          startPos={[5, 0, 30]}
+          startPos={[8, 0, 30]}
           scale={0.8}
         />
-        <NPC
+        {/* <NPC
           modelPath="/models/npc4.glb"
           name="Visitor D"
           startPos={[6, 0, 30]}
           scale={0.8}
-        />
+        /> */}
         <NPC
           modelPath="/models/npc5.glb"
           name="Visitor E"
-          startPos={[4, 0, 43]}
+          startPos={[-8, 0, 23]}
           wanderBounds={[-5, -5, 35, 15]}
           scale={0.8}
         />

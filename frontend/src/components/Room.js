@@ -1,4 +1,6 @@
 import React from "react";
+import { useLoader } from "@react-three/fiber";
+import { TextureLoader, RepeatWrapping } from "three";
 import WallWithEntry from "./WallWithEntry";
 
 export default function Room({
@@ -9,9 +11,20 @@ export default function Room({
     thickness,
     hasFrontEntry,
     hasBackEntry,
+    hasRoof = true  // New prop to control roof
 }) {
     const halfW = width / 2;
     const halfD = depth / 2;
+
+    // Load wall texture
+    const wallTexture = useLoader(TextureLoader, "/textures/marble.jpg");
+    wallTexture.wrapS = wallTexture.wrapT = RepeatWrapping;
+    wallTexture.repeat.set(width / 5, height / 5); // Adjust tiling
+
+    // Load ceiling texture (can be same or different)
+    const ceilingTexture = useLoader(TextureLoader, "/textures/marble.jpg");
+    ceilingTexture.wrapS = ceilingTexture.wrapT = RepeatWrapping;
+    ceilingTexture.repeat.set(width / 8, depth / 8);
 
     return (
         <group position={[0, height / 2, centerZ]}>
@@ -25,11 +38,12 @@ export default function Room({
                     thickness={thickness}
                     entryWidth={8}
                     entryHeight={6}
+                    wallTexture={wallTexture}
                 />
             ) : (
-                <mesh position={[0, 0, -halfD]}>
+                <mesh position={[0, 0, -halfD]} castShadow receiveShadow>
                     <boxGeometry args={[width, height, thickness]} />
-                    <meshStandardMaterial color="#888" />
+                    <meshStandardMaterial map={wallTexture} />
                 </mesh>
             )}
 
@@ -43,11 +57,12 @@ export default function Room({
                     thickness={thickness}
                     entryWidth={8}
                     entryHeight={6}
+                    wallTexture={wallTexture}
                 />
             ) : (
-                <mesh position={[0, 0, halfD]}>
+                <mesh position={[0, 0, halfD]} castShadow receiveShadow>
                     <boxGeometry args={[width, height, thickness]} />
-                    <meshStandardMaterial color="#888" />
+                    <meshStandardMaterial map={wallTexture} />
                 </mesh>
             )}
 
@@ -60,6 +75,7 @@ export default function Room({
                 thickness={thickness}
                 entryWidth={0} // Solid
                 entryHeight={0}
+                wallTexture={wallTexture}
             />
 
             {/* RIGHT WALL */}
@@ -71,7 +87,16 @@ export default function Room({
                 thickness={thickness}
                 entryWidth={0} // Solid
                 entryHeight={0}
+                wallTexture={wallTexture}
             />
+
+            {/* ROOF/CEILING */}
+            {hasRoof && (
+                <mesh position={[0, height / 2 + thickness / 2, 0]} receiveShadow>
+                    <boxGeometry args={[width + thickness * 2, thickness, depth + thickness * 2]} />
+                    <meshStandardMaterial map={ceilingTexture} />
+                </mesh>
+            )}
         </group>
     );
 }

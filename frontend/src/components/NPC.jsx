@@ -13,7 +13,7 @@ export default function NPC({
     scale = 0.8,
     wanderBounds = null,
     debug = false,
-    bodyRadius = 0.4  // Add body radius prop
+    bodyRadius = 0.4
 }) {
     const group = useRef();
     const { scene, animations } = useGLTF(modelPath);
@@ -23,6 +23,33 @@ export default function NPC({
     const [isStuck, setIsStuck] = useState(false);
     const [lastPosition, setLastPosition] = useState(new THREE.Vector3(...startPos));
     const [stuckTimer, setStuckTimer] = useState(0);
+
+    // Fix vertex colors and material loading
+    useEffect(() => {
+        if (scene) {
+            scene.traverse((child) => {
+                if (child.isMesh && child.material) {
+                    const materials = Array.isArray(child.material) ? child.material : [child.material];
+
+                    materials.forEach(mat => {
+                        // Force vertex colors if geometry has them
+                        if (child.geometry?.attributes?.color) {
+                            mat.vertexColors = true;
+                            console.log(`${name}: Enabled vertex colors`);
+                        }
+
+                        // Ensure material is using correct color space
+                        if (mat.map) {
+                            mat.map.colorSpace = THREE.SRGBColorSpace;
+                        }
+
+                        // Force update
+                        mat.needsUpdate = true;
+                    });
+                }
+            });
+        }
+    }, [scene, name]);
 
     // Generate a new random point within allowed area
     function getRandomTarget() {
